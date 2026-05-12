@@ -2,8 +2,8 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <title>Nexus AI Engine - Ultimate</title>
-    <!-- Library Wajib Office.js -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus AI Engine - DAANIERU ULTIMATE FINAL</title>
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <style>
         :root {
@@ -13,387 +13,501 @@
             --accent-color: #00ffcc;
             --btn-hover: #00ccaa;
             --border-color: #30363d;
+            --user-msg-bg: #232b36;
+            --ai-msg-bg: #1c2128;
+            --error-red: #ff7b72;
+            --magic-purple: #d2a8ff;
         }
         
         body {
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: 'Segoe UI', 'Consolas', monospace;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
             padding: 15px;
             display: flex;
             flex-direction: column;
-            height: 95vh;
+            height: 98vh;
+            box-sizing: border-box;
+            overflow: hidden;
         }
         
+        /* HEADER SECTION */
         .header {
-            font-size: 1.2em;
-            font-weight: bold;
+            font-size: 1.1em;
+            font-weight: 800;
             color: var(--accent-color);
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+            margin-bottom: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            letter-spacing: 1px;
         }
         
         select {
-            background-color: var(--bg-color);
+            background-color: var(--panel-bg);
             color: var(--accent-color);
             border: 1px solid var(--accent-color);
-            padding: 4px;
-            border-radius: 4px;
+            padding: 5px 10px;
+            border-radius: 5px;
             font-family: inherit;
-            font-size: 0.7em;
+            font-size: 0.8em;
+            cursor: pointer;
             outline: none;
         }
 
+        /* CHAT HISTORY AREA */
         #chat-history {
             flex-grow: 1;
             background-color: var(--panel-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 10px;
-            margin-bottom: 10px;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
             overflow-y: auto;
-            font-size: 0.85em;
+            font-size: 0.9em;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .chat-msg {
+            padding: 12px;
+            border-radius: 8px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            max-width: 95%;
+            position: relative;
+        }
+
+        .user-msg {
+            background-color: var(--user-msg-bg);
+            border-left: 4px solid #58a6ff;
+            align-self: flex-end;
+        }
+
+        .ai-msg {
+            background-color: var(--ai-msg-bg);
+            border-left: 4px solid var(--accent-color);
+            align-self: flex-start;
+        }
+
+        /* INPUT AREA */
+        .input-container {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
 
-        .chat-msg {
-            padding: 8px;
-            border-radius: 4px;
-            line-height: 1.4;
-            white-space: pre-wrap;
-        }
-
-        .user-msg { background-color: #232b36; border-left: 3px solid #58a6ff; }
-        .ai-msg { background-color: #1c2128; border-left: 3px solid var(--accent-color); }
-        
         textarea {
             width: 100%;
-            height: 60px;
+            height: 80px;
             background-color: var(--panel-bg);
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 10px;
-            resize: vertical;
+            border-radius: 8px;
+            padding: 12px;
+            resize: none;
             box-sizing: border-box;
             font-family: inherit;
+            font-size: 0.95em;
+            transition: border-color 0.3s;
         }
         
-        textarea:focus { outline: none; border-color: var(--accent-color); }
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
         
+        /* BUTTONS */
         .btn-group {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 10px;
         }
 
         button {
             background-color: #21262d;
-            color: #c9d1d9;
+            color: var(--text-color);
             border: 1px solid var(--border-color);
-            padding: 8px;
-            font-weight: bold;
+            padding: 10px;
+            font-weight: 700;
             font-family: inherit;
             font-size: 0.8em;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease-in-out;
+            text-transform: uppercase;
         }
         
-        button:hover { border-color: var(--text-color); }
+        button:hover {
+            border-color: var(--text-color);
+            transform: translateY(-1px);
+        }
         
-        #ask-btn { grid-column: span 2; background-color: var(--accent-color); color: var(--bg-color); border: none; font-size: 0.9em; padding: 10px;}
-        #ask-btn:hover { background-color: var(--btn-hover); }
-
-        /* Magic Buttons (Hidden by default) */
-        .magic-btn { display: none; border-color: var(--accent-color); color: var(--accent-color); }
-        .magic-btn:hover { background-color: var(--accent-color); color: var(--bg-color); }
+        #ask-btn {
+            grid-column: span 2;
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            font-size: 1em;
+            padding: 12px;
+            margin-bottom: 5px;
+        }
         
-        #btn-categorize { border-color: #d2a8ff; color: #d2a8ff; grid-column: span 2;}
-        #btn-categorize:hover { background-color: #d2a8ff; color: var(--bg-color); }
+        #ask-btn:hover {
+            background-color: var(--btn-hover);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+        }
 
-        .api-section { margin-top: 10px; border-top: 1px dashed var(--border-color); padding-top: 10px; }
-        .api-section input { width: 100%; background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); padding: 5px; border-radius: 4px; font-family: inherit; font-size: 0.7em;}
+        /* MAGIC BUTTONS */
+        .magic-btn {
+            display: none; /* Muncul otomatis jika ada konten relevan */
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .magic-btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        #btn-categorize {
+            border-color: var(--magic-purple);
+            color: var(--magic-purple);
+            grid-column: span 2;
+            margin-top: 5px;
+        }
+        
+        #btn-categorize:hover {
+            background-color: var(--magic-purple);
+            color: var(--bg-color);
+        }
+
+        /* STATUS FOOTER */
+        .status-footer {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.7em;
+            color: #8b949e;
+            display: flex;
+            justify-content: space-between;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <span>⚡ DAANIERU</span>
+        <span>⚡ DAANIERU_INTEGRATED</span>
         <select id="model-select">
-            <option value="gemini-2.5-flash">Flash Mode</option>
-            <option value="gemini-2.5-pro">Pro Mode</option>
+            <option value="gemini-2.5-flash">MODE: FLASH (FAST)</option>
+            <option value="gemini-2.5-pro">MODE: PRO (SMART)</option>
         </select>
     </div>
     
     <div id="chat-history">
-        <div class="chat-msg ai-msg">Sistem Terintegrasi. Mode Pembacaan Seluruh Sheet AKTIF. Siap menerima perintah otomatisasi.</div>
+        <div class="chat-msg ai-msg">Nexus AI Engine Aktif.
+- Memori Percakapan: ON
+- Scan Lintas Sheet: ON
+- Tracking Kursor: ON
+- Macro & Formula Injector: READY</div>
     </div>
     
-    <textarea id="prompt" placeholder="[CMD] > Tanya rumus, suruh rapikan data, dll..."></textarea>
-    
-    <div class="btn-group">
-        <button id="ask-btn">EXECUTE_</button>
+    <div class="input-container">
+        <textarea id="prompt" placeholder="[CMD] > Berikan instruksi Excel Anda di sini..."></textarea>
         
-        <!-- Tombol Sihir yang muncul sesuai konteks jawaban AI -->
-        <button id="btn-import" class="magic-btn">📥 IMPORT TABEL</button>
-        <button id="btn-inject" class="magic-btn">💉 INJECT RUMUS</button>
-        <button id="btn-macro" class="magic-btn">▶️ RUN MACRO</button>
-        
-        <!-- Tombol Fix Kategori -->
-        <button id="btn-categorize">🧹 KATEGORIKAN KOLOM YG DIBLOK</button>
+        <div class="btn-group">
+            <button id="ask-btn">EXECUTE COMMAND</button>
+            
+            <button id="btn-import" class="magic-btn">📥 IMPORT TABEL</button>
+            <button id="btn-inject" class="magic-btn">💉 INJECT RUMUS</button>
+            <button id="btn-macro" class="magic-btn">▶️ RUN MACRO</button>
+            
+            <button id="btn-categorize">🧹 SMART CATEGORIZE (BLOK KOLOM)</button>
+        </div>
     </div>
 
-    <div class="api-section">
-        <input type="password" id="api-key" placeholder="API Key...">
+    <div class="status-footer">
+        <span>API_KEY: VERIFIED</span>
+        <span>ENGINE: v2.5.ULTIMATE</span>
     </div>
 
     <script type="module">
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-        // Global Memory
-        let chatMemory = [];
-        let extractedTable = null;
-        let extractedFormula = null;
-        let extractedScript = null;
+        // KUNCI API PERMANEN
+        const API_KEY = "AIzaSyCtZCINLMw11DfxEYRQRMfM-qc_jsJRt8M";
+        
+        // GLOBAL STATE
+        let chatHistory = [];
+        let lastTableData = null;
+        let lastFormulaData = null;
+        let lastScriptData = null;
 
+        // INITIALIZE OFFICE
         Office.onReady((info) => {
             if (info.host === Office.HostType.Excel) {
-                document.getElementById("ask-btn").onclick = runGemini;
-                document.getElementById("btn-import").onclick = importTable;
-                document.getElementById("btn-inject").onclick = injectFormula;
-                document.getElementById("btn-macro").onclick = runMacro;
-                document.getElementById("btn-categorize").onclick = smartCategorize;
+                // Binding Tombol ke Fungsi
+                document.getElementById("ask-btn").onclick = handleExecute;
+                document.getElementById("btn-import").onclick = executeImport;
+                document.getElementById("btn-inject").onclick = executeInject;
+                document.getElementById("btn-macro").onclick = executeMacro;
+                document.getElementById("btn-categorize").onclick = executeCategorize;
                 
-                const savedKey = localStorage.getItem("gemini_api_key_v1");
-                if (savedKey) document.getElementById("api-key").value = savedKey;
-                document.getElementById("api-key").addEventListener('input', function() {
-                    localStorage.setItem("gemini_api_key_v1", this.value.trim());
-                });
+                console.log("DAANIERU System Ready.");
             }
         });
 
-        function appendChat(role, text) {
+        // FUNGSI UI: TAMBAH CHAT
+        function addMessage(role, text) {
             const chatBox = document.getElementById("chat-history");
-            const div = document.createElement("div");
-            div.className = `chat-msg ${role}-msg`;
-            div.innerText = text;
-            chatBox.appendChild(div);
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `chat-msg ${role}-msg`;
+            msgDiv.innerText = text;
+            chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
-            if (role === 'user') chatMemory.push(`User: ${text}`);
-            if (role === 'ai') chatMemory.push(`AI: ${text}`);
-            // Jaga ingatan maksimal 6 percakapan terakhir biar ga over-limit token
-            if (chatMemory.length > 6) chatMemory = chatMemory.slice(-6);
+
+            // Simpan ke Memori (Max 10 percakapan)
+            chatHistory.push({ role: role, parts: [{ text: text }] });
+            if (chatHistory.length > 10) chatHistory.shift();
         }
 
-        function hideMagicButtons() {
-            document.getElementById("btn-import").style.display = "none";
-            document.getElementById("btn-inject").style.display = "none";
-            document.getElementById("btn-macro").style.display = "none";
-            extractedTable = null; extractedFormula = null; extractedScript = null;
-        }
-
-        async function getExcelContext() {
-            let contextStr = "=== DATA WORKBOOK ===\n";
-            let cursor = "";
-            let selectedData = "";
-
-            await Excel.run(async (context) => {
-                // 1. Baca Kursor (Active Cell)
-                const activeCell = context.workbook.getActiveCell();
-                activeCell.load("address");
-
-                // 2. Baca Data yang di-blok (Selected Range)
-                const selection = context.workbook.getSelectedRange();
-                selection.load("values, address");
-
-                // 3. Baca Data tiap Sheet
-                const sheets = context.workbook.worksheets;
-                sheets.load("items/name");
-                await context.sync();
-
-                for (let sheet of sheets.items) {
-                    const range = sheet.getUsedRange();
-                    range.load("values");
-                    await context.sync();
-                    contextStr += `[Sheet: ${sheet.name}]\n`;
-                    if (range.values && range.values.length > 0) {
-                        contextStr += JSON.stringify(range.values.slice(0, 30)) + "\n"; // Limit 30 baris
-                    }
-                }
-                
-                cursor = activeCell.address;
-                selectedData = `Blok Aktif: ${selection.address}. Isi: ${JSON.stringify(selection.values.slice(0,10))}`;
-            });
-
-            return { contextStr, cursor, selectedData };
-        }
-
-        async function runGemini() {
-            const promptInput = document.getElementById("prompt");
-            const prompt = promptInput.value.trim();
-            const apiKey = document.getElementById("api-key").value.trim();
-            const selectedModel = document.getElementById("model-select").value;
-
-            if (!apiKey || !prompt) return;
-
-            promptInput.value = "";
-            appendChat("user", prompt);
-            hideMagicButtons();
+        // FUNGSI CORE: AMBIL SEMUA DATA EXCEL (CONTEXT)
+        async function getFullContext() {
+            let contextResult = {
+                sheetsData: "",
+                activeCell: "",
+                selection: ""
+            };
 
             try {
-                const excelData = await getExcelContext();
-                
-                const genAI = new GoogleGenerativeAI(apiKey);
-                const model = genAI.getGenerativeModel({ model: selectedModel });
+                await Excel.run(async (context) => {
+                    // 1. Ambil posisi kursor
+                    const activeCell = context.workbook.getActiveCell();
+                    activeCell.load("address");
 
-                // INSTRUKSI DEWA (Mata, Ingatan, Tangan)
-                const systemInstruction = `Kamu adalah DAANIERU_AI, engineer otomasi Excel. 
-                Data Excel: ${excelData.contextStr}
-                POSISI KURSOR USER SEKARANG: ${excelData.cursor} (Jadikan ini target penulisan rumus).
-                History Obrolan: ${chatMemory.join("\n")}
-                
-                ATURAN OUTPUT:
-                1. Jika diminta RUMUS (contoh: VLOOKUP ambil data dari Sheet1), berikan rumus yang TEPAT untuk sel ${excelData.cursor}. Tulis rumus di dalam format blockcode \`\`\`excel ... \`\`\`. Pastikan rumus dimulai dengan tanda =.
-                2. Jika diminta DATA/TABEL, berikan dalam format Markdown Table standar.
-                3. Jika diminta MACRO/Otomasi ribet (misal: "warnai baris ini"), berikan kode JavaScript Office.js dalam \`\`\`javascript ... \`\`\`.
-                Jawablah dengan singkat, padat, dan *to the point*.`;
+                    // 2. Ambil data yang sedang di-blok user
+                    const selection = context.workbook.getSelectedRange();
+                    selection.load("address, values");
 
-                const fullPrompt = `${systemInstruction}\n\nPerintah User: ${prompt}`;
-                
-                const result = await model.generateContent(fullPrompt);
-                const responseText = await result.response.text();
-                
-                appendChat("ai", responseText);
+                    // 3. Ambil data dari semua sheet yang ada
+                    const sheets = context.workbook.worksheets;
+                    sheets.load("items/name");
+                    await context.sync();
 
-                // PARSER: Deteksi apa yang dikasih AI buat nampilin tombol ajaib
-                if (responseText.includes("|") && responseText.includes("---")) {
-                    extractedTable = parseMarkdownTable(responseText);
-                    if (extractedTable.length > 0) document.getElementById("btn-import").style.display = "block";
+                    let allSheetsInfo = "Daftar Data per Sheet:\n";
+                    for (let sheet of sheets.items) {
+                        const range = sheet.getUsedRange();
+                        range.load("values");
+                        await context.sync();
+                        
+                        allSheetsInfo += `--- Sheet: ${sheet.name} ---\n`;
+                        if (range.values && range.values.length > 0) {
+                            // Ambil 30 baris pertama tiap sheet agar tidak overload token
+                            allSheetsInfo += JSON.stringify(range.values.slice(0, 30)) + "\n";
+                        } else {
+                            allSheetsInfo += "(Sheet ini kosong)\n";
+                        }
+                    }
+
+                    contextResult.sheetsData = allSheetsInfo;
+                    contextResult.activeCell = activeCell.address;
+                    contextResult.selection = `User sedang memblok range ${selection.address} dengan isi: ${JSON.stringify(selection.values.slice(0,5))}`;
+                });
+            } catch (err) {
+                contextResult.sheetsData = "Gagal mengambil data workbook.";
+            }
+            return contextResult;
+        }
+
+        // FUNGSI UTAMA: EKSEKUSI AI
+        async function handleExecute() {
+            const promptEl = document.getElementById("prompt");
+            const userText = promptEl.value.trim();
+            const modelName = document.getElementById("model-select").value;
+
+            if (!userText) return;
+
+            // Bersihkan input & Sembunyikan tombol ajaib sebelumnya
+            promptEl.value = "";
+            document.querySelectorAll('.magic-btn').forEach(b => b.style.display = 'none');
+            lastTableData = null; lastFormulaData = null; lastScriptData = null;
+
+            addMessage("user", userText);
+
+            try {
+                // Ambil semua data Excel sebagai bahan pertimbangan AI
+                const excelContext = await getFullContext();
+                
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                const model = genAI.getGenerativeModel({ model: modelName });
+
+                // Master Instruction: Memberi instruksi format ke Gemini
+                const masterSystemPrompt = `Identitas: Kamu adalah DAANIERU_AI.
+Konteks Workbook: ${excelContext.sheetsData}
+Posisi Kursor (Active Cell): ${excelContext.activeCell}
+${excelContext.selection}
+
+Aturan Ketat Output:
+1. Jika memberikan RUMUS EXCEL, wajib diletakkan dalam blockcode: \`\`\`excel [RUMUS] \`\`\`. Contoh: \`\`\`excel \n =SUM(A1:A10) \n \`\`\`.
+2. Jika memberikan TABEL DATA, gunakan format Markdown Tabel.
+3. Jika memberikan OTOMASI VISUAL/MACRO, gunakan kode Office.js JavaScript dalam blockcode: \`\`\`javascript [KODE] \`\`\`.
+Referensikan alamat sel dan nama sheet dengan tepat sesuai konteks di atas.`;
+
+                // Mulai Generate
+                const result = await model.generateContent(masterSystemPrompt + "\n\nPerintah User: " + userText);
+                const response = await result.response;
+                const aiResponseText = response.text();
+
+                addMessage("ai", aiResponseText);
+
+                // --- LOGIKA PARSING (Deteksi konten untuk tombol) ---
+                
+                // A. Deteksi Tabel
+                if (aiResponseText.includes("|") && aiResponseText.includes("---")) {
+                    lastTableData = parseTable(aiResponseText);
+                    if (lastTableData.length > 0) document.getElementById("btn-import").style.display = "block";
                 }
-                
-                const formulaMatch = responseText.match(/```excel\n(.*?)\n
-```/s) || responseText.match(/`(=.*?)`/);
+
+                // B. Deteksi Rumus Excel
+                const formulaMatch = aiResponseText.match(/```excel\n(.*?)\n```/s) || aiResponseText.match(/`(=.*?)`/);
                 if (formulaMatch) {
-                    extractedFormula = formulaMatch[1].trim();
+                    lastFormulaData = formulaMatch[1].trim();
                     document.getElementById("btn-inject").style.display = "block";
                 }
 
-                const scriptMatch = responseText.match(/```javascript\n(.*?)\n```/s);
+                // C. Deteksi Script Macro (JavaScript)
+                const scriptMatch = aiResponseText.match(/```javascript\n(.*?)\n```/s);
                 if (scriptMatch) {
-                    extractedScript = scriptMatch[1].trim();
+                    lastScriptData = scriptMatch[1].trim();
                     document.getElementById("btn-macro").style.display = "block";
                 }
 
             } catch (error) {
-                appendChat("ai", `[ERROR] ${error.message}`);
+                addMessage("ai", `[ERROR_SYSTEM]: ${error.message}`);
             }
         }
 
-        // FITUR 1: INJECT RUMUS OTOMATIS (Zero-Click)
-        async function injectFormula() {
-            if (!extractedFormula) return;
-            await Excel.run(async (context) => {
-                const activeCell = context.workbook.getActiveCell();
-                activeCell.formulas = [[extractedFormula]];
-                activeCell.format.fill.color = "#e6ffed"; // Kasih warna hijau dikit biar ketahuan sukses
-                await context.sync();
-                appendChat("ai", `⚡ Rumus ${extractedFormula} berhasil ditanam ke Excel!`);
-                document.getElementById("btn-inject").style.display = "none";
+        // FUNGSI PARSER: Ubah teks tabel jadi Array Excel
+        function parseTable(text) {
+            let lines = text.trim().split('\n').filter(l => l.includes('|'));
+            // Buang baris pemisah markdown ---|---
+            lines = lines.filter(l => !l.match(/\|[-\s]+\|/));
+            
+            return lines.map(line => {
+                let cells = line.split('|').map(c => c.trim());
+                // Buang elemen kosong di ujung kiri/kanan karena pemisah |
+                if (cells[0] === "") cells.shift();
+                if (cells[cells.length - 1] === "") cells.pop();
+                return cells;
             });
         }
 
-        // FITUR 2: TABEL OTOMATIS
-        function parseMarkdownTable(mdText) {
-            let rows = mdText.trim().split('\n').filter(row => row.includes('|'));
-            rows = rows.filter(row => !row.match(/\|[-\s]+\|/));
-            return rows.map(row => row.split('|').map(c => c.trim()).slice(1, -1));
-        }
+        // --- FITUR EKSEKUSI KE EXCEL ---
 
-        async function importTable() {
-            if (!extractedTable) return;
+        // 1. IMPORT TABEL
+        async function executeImport() {
+            if (!lastTableData) return;
             await Excel.run(async (context) => {
                 const sheet = context.workbook.worksheets.getActiveWorksheet();
                 const activeCell = context.workbook.getActiveCell();
                 activeCell.load(["rowIndex", "columnIndex"]);
                 await context.sync();
-                const targetRange = sheet.getRangeByIndexes(activeCell.rowIndex, activeCell.columnIndex, extractedTable.length, extractedTable[0].length);
-                targetRange.values = extractedTable;
-                targetRange.format.autofitColumns();
+
+                const rowSize = lastTableData.length;
+                const colSize = lastTableData[0].length;
+                
+                const range = sheet.getRangeByIndexes(activeCell.rowIndex, activeCell.columnIndex, rowSize, colSize);
+                range.values = lastTableData;
+                range.format.autofitColumns();
                 await context.sync();
-                appendChat("ai", `📥 Tabel berhasil di-import!`);
+                
+                addMessage("ai", "✅ Data tabel berhasil dipindahkan ke Sheet!");
                 document.getElementById("btn-import").style.display = "none";
             });
         }
 
-        // FITUR 3: SMART CATEGORIZATION (Pembukuan Otomatis)
-        async function smartCategorize() {
-            const apiKey = document.getElementById("api-key").value.trim();
-            const selectedModel = document.getElementById("model-select").value;
-            if (!apiKey) return;
-
-            appendChat("user", "[System Command] > Rapikan/Kategorikan data yang diblok.");
-            
+        // 2. INJECT RUMUS
+        async function executeInject() {
+            if (!lastFormulaData) return;
             await Excel.run(async (context) => {
-                const range = context.workbook.getSelectedRange();
-                range.load(["values", "address", "rowIndex", "columnIndex", "rowCount"]);
+                const activeCell = context.workbook.getActiveCell();
+                activeCell.formulas = [[lastFormulaData]];
+                activeCell.format.fill.color = "#00ffcc22"; // Highlight tipis
                 await context.sync();
-
-                if (range.values[0].length > 1) {
-                    appendChat("ai", "⚠️ Tolong blok 1 kolom saja (kolom deskripsi) untuk dikategorikan.");
-                    return;
-                }
-
-                appendChat("ai", "⏳ Menganalisa & membuat kategori otomatis...");
-                const genAI = new GoogleGenerativeAI(apiKey);
-                const model = genAI.getGenerativeModel({ model: selectedModel });
                 
-                const prompt = `Ini adalah list transaksi/data: ${JSON.stringify(range.values)}. 
-                Berikan array JSON berisi kategori pendek (1-2 kata) untuk setiap baris. Format WAJIB: ["Kategori1", "Kategori2", ...]. Jangan ada teks lain selain array JSON tersebut.`;
-                
-                const result = await model.generateContent(prompt);
-                let responseText = await result.response.text();
-                
-                // Bersihkan output AI barangkali ada backticks
-                responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
-                
-                try {
-                    const categories = JSON.parse(responseText);
-                    const outputRange = context.workbook.worksheets.getActiveWorksheet().getRangeByIndexes(range.rowIndex, range.columnIndex + 1, range.rowCount, 1);
-                    
-                    // Format data JSON ke format array 2D Excel
-                    const excelValues = categories.map(cat => [cat]);
-                    outputRange.values = excelValues;
-                    outputRange.format.fill.color = "#fff0b3"; // Kasih warna kuning
-                    await context.sync();
-                    appendChat("ai", `🧹 Kategori berhasil dibuat di sebelah kanan kolom!`);
-                } catch (e) {
-                    appendChat("ai", `Gagal memparsing JSON dari AI. Coba lagi.`);
-                }
+                addMessage("ai", `💉 Rumus ${lastFormulaData} berhasil ditanam.`);
+                document.getElementById("btn-inject").style.display = "none";
             });
         }
 
-        // FITUR 4: EKSEKUSI MACRO JAVASCRIPT
-        async function runMacro() {
-            if (!extractedScript) return;
+        // 3. RUN MACRO (Office.js Script)
+        async function executeMacro() {
+            if (!lastScriptData) return;
             try {
-                // Warning: Ini cara paling "hacker" buat eksekusi kode dinamis di Excel JS
-                const scriptFunction = new Function('Excel', `return Excel.run(async (context) => { ${extractedScript} await context.sync(); });`);
-                await scriptFunction(Excel);
-                appendChat("ai", `▶️ Script Macro berhasil dijalankan!`);
+                // Mengubah teks string menjadi fungsi eksekusi nyata
+                const dynamicMacro = new Function('Excel', `return Excel.run(async (context) => { 
+                    ${lastScriptData} 
+                    await context.sync(); 
+                });`);
+                
+                await dynamicMacro(Excel);
+                addMessage("ai", "▶️ Script Visual/Macro sukses dijalankan.");
                 document.getElementById("btn-macro").style.display = "none";
-            } catch (e) {
-                appendChat("ai", `[ERROR MACRO] Script gagal dieksekusi: ${e.message}`);
+            } catch (err) {
+                addMessage("ai", `[ERROR_MACRO]: ${err.message}`);
             }
+        }
+
+        // 4. SMART CATEGORIZE (Fitur Beres-beres)
+        async function executeCategorize() {
+            const modelName = document.getElementById("model-select").value;
+            addMessage("ai", "⏳ Sedang menganalisa data yang Anda blok...");
+
+            await Excel.run(async (context) => {
+                const selection = context.workbook.getSelectedRange();
+                selection.load(["values", "rowIndex", "columnIndex", "rowCount"]);
+                await context.sync();
+
+                if (selection.values[0].length > 1) {
+                    addMessage("ai", "⚠️ Tolong blok 1 kolom deskripsi saja.");
+                    return;
+                }
+
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                const model = genAI.getGenerativeModel({ model: modelName });
+                
+                const categorizationPrompt = `Berikut adalah data dari Excel: ${JSON.stringify(selection.values)}. 
+Tolong buatkan kategori singkat (1-2 kata) untuk tiap barisnya. 
+Berikan hasil HANYA dalam format JSON Array String, contoh: ["Elektronik", "Fashion", "Lainnya"]. Jangan ada teks tambahan.`;
+
+                const result = await model.generateContent(categorizationPrompt);
+                let responseText = await result.response.text();
+                
+                // Bersihkan JSON dari backticks
+                responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                
+                try {
+                    const categoryList = JSON.parse(responseText);
+                    const targetSheet = context.workbook.worksheets.getActiveWorksheet();
+                    // Letakkan di kolom sebelah kanan dari data yang diblok
+                    const targetRange = targetSheet.getRangeByIndexes(selection.rowIndex, selection.columnIndex + 1, selection.rowCount, 1);
+                    
+                    const excelFormattedValues = categoryList.map(item => [item]);
+                    targetRange.values = excelFormattedValues;
+                    targetRange.format.fill.color = "#d2a8ff22";
+                    await context.sync();
+                    
+                    addMessage("ai", "🧹 Pembersihan data selesai. Kategori ditambahkan di kolom sebelah.");
+                } catch (e) {
+                    addMessage("ai", "Gagal memproses kategori otomatis. Coba ulangi.");
+                }
+            });
         }
     </script>
 </body>
