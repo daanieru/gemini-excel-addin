@@ -55,7 +55,8 @@ async function runGemini() {
 }
 
 async function callGeminiAPI(key, userPrompt, context) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+    // FIX: Menggunakan model 'gemini-1.5-pro-latest' agar dikenali oleh server v1beta
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${key}`;
     
     const body = {
         contents: [{
@@ -67,7 +68,7 @@ async function callGeminiAPI(key, userPrompt, context) {
         const response = await fetch(url, {
             method: "POST",
             headers: {
-                "Content-Type": "application/json" // Header penting ini yang sering bikin error kalau tidak ada
+                "Content-Type": "application/json" 
             },
             body: JSON.stringify(body)
         });
