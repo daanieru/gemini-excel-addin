@@ -2,21 +2,20 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <title>Daanieru Integrated AI</title>
+    <title>Nexus AI Engine</title>
     <!-- Library Wajib Office.js -->
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <style>
-        /* TEMA DIGITAL DARK MODE */
         :root {
             --bg-color: #0d1117;
             --panel-bg: #161b22;
             --text-color: #c9d1d9;
-            --accent-color: #00ffcc; /* Warna neon cyan */
+            --accent-color: #00ffcc;
             --border-color: #30363d;
         }
         
         body {
-            font-family: 'Consolas', 'Courier New', monospace; /* Font ala programmer */
+            font-family: 'Consolas', 'Courier New', monospace;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -85,7 +84,7 @@
             min-height: 80px;
             font-size: 0.9em;
             line-height: 1.5;
-            white-space: pre-wrap; /* Mempertahankan format baris baru dari AI */
+            white-space: pre-wrap;
             overflow-y: auto;
             flex-grow: 1;
         }
@@ -122,10 +121,10 @@
     </style>
 </head>
 <body>
-    <div class="header">Daanieru Integrated AI</div>
+    <div class="header">⚡ DAANIERU INTEGRATED AI_</div>
     
     <textarea id="prompt" placeholder="[Input_Command] > Ketik instruksi data di sini..."></textarea>
-    <button id="ask-btn">Execute_</button>
+    <button id="ask-btn">EXECUTE_</button>
     
     <div id="response">Sistem siap. Menunggu perintah...</div>
 
@@ -134,6 +133,69 @@
         <input type="password" id="api-key" placeholder="Paste Gemini API Key di sini...">
     </div>
 
-    <script src="script.js?v=4"></script>
+    <!-- MENGGUNAKAN SDK GOOGLE RESMI (ANTI ERROR URL) -->
+    <script type="module">
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+        Office.onReady((info) => {
+            if (info.host === Office.HostType.Excel) {
+                document.getElementById("ask-btn").onclick = runGemini;
+                
+                const savedKey = localStorage.getItem("gemini_api_key_v1");
+                if (savedKey) {
+                    document.getElementById("api-key").value = savedKey;
+                }
+                
+                document.getElementById("api-key").addEventListener('input', function() {
+                    localStorage.setItem("gemini_api_key_v1", this.value.trim());
+                });
+            }
+        });
+
+        async function runGemini() {
+            const prompt = document.getElementById("prompt").value;
+            // Trim ini yang bikin spasi ga sengaja kehapus biar API ga eror
+            const apiKey = document.getElementById("api-key").value.trim(); 
+            const responseDiv = document.getElementById("response");
+
+            if (!apiKey) {
+                responseDiv.innerHTML = "<span style='color: #ff7b72;'>[ERROR] API Key kosong!</span>";
+                return;
+            }
+            if (!prompt) {
+                responseDiv.innerHTML = "<span style='color: #d2a8ff;'>[WARN] Instruksi kosong.</span>";
+                return;
+            }
+
+            responseDiv.innerHTML = "<span style='color: #00ffcc;'>Menghubungkan ke server Google (Secure Mode)... ⏳</span>";
+
+            try {
+                let excelContext = "Struktur Workbook:\n";
+                await Excel.run(async (context) => {
+                    const sheets = context.workbook.worksheets;
+                    sheets.load("items/name");
+                    await context.sync();
+                    for (let sheet of sheets.items) {
+                        excelContext += `- Sheet: ${sheet.name}\n`;
+                    }
+                });
+
+                // Inisialisasi Otak Gemini pakai Library Asli
+                const genAI = new GoogleGenerativeAI(apiKey);
+                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+                const fullPrompt = `${excelContext}\n\nInstruksi User: ${prompt}`;
+                
+                // Eksekusi
+                const result = await model.generateContent(fullPrompt);
+                const response = await result.response;
+                
+                responseDiv.innerText = response.text();
+
+            } catch (error) {
+                responseDiv.innerHTML = `<span style='color: #ff7b72;'>[CRITICAL_ERROR] ${error.message}</span>`;
+            }
+        }
+    </script>
 </body>
 </html>
