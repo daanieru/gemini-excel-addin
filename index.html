@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Gemini AI Sidebar</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 15px; background: #f4f4f4; }
+        .container { display: flex; flex-direction: column; gap: 10px; }
+        textarea { width: 100%; height: 80px; border-radius: 5px; border: 1px solid #ccc; padding: 5px; }
+        button { background: #0078d4; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px; }
+        #response { margin-top: 15px; padding: 10px; background: white; border-radius: 5px; min-height: 50px; font-size: 14px; border: 1px solid #ddd; }
+        .setup { font-size: 11px; color: #666; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Gemini AI Assistant</h3>
+        <textarea id="prompt" placeholder="Tanya rumus atau analisis data..."></textarea>
+        <button id="ask-btn">Tanya Gemini</button>
+        
+        <div id="response">Jawaban akan muncul di sini...</div>
+
+        <div class="setup">
+            <input type="password" id="api-key" placeholder="Masukkan Gemini API Key">
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
