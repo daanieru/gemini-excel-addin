@@ -1,6 +1,17 @@
 Office.onReady((info) => {
     if (info.host === Office.HostType.Excel) {
         document.getElementById("ask-btn").onclick = runGemini;
+        
+        // FITUR AUTO-SAVE API KEY: Load saat aplikasi dibuka
+        const savedKey = localStorage.getItem("gemini_api_key_v1");
+        if (savedKey) {
+            document.getElementById("api-key").value = savedKey;
+        }
+        
+        // Simpan setiap kali user mengetik/paste API Key baru
+        document.getElementById("api-key").addEventListener('input', function() {
+            localStorage.setItem("gemini_api_key_v1", this.value);
+        });
     }
 });
 
@@ -9,31 +20,37 @@ async function runGemini() {
     const apiKey = document.getElementById("api-key").value;
     const responseDiv = document.getElementById("response");
 
+    // Validasi input
     if (!apiKey) {
-        alert("Masukkan API Key dulu di bagian bawah!");
+        responseDiv.innerHTML = "<span style='color: #ff7b72;'>[ERROR] API Key tidak ditemukan. Harap isi di bawah!</span>";
+        return;
+    }
+    if (!prompt) {
+        responseDiv.innerHTML = "<span style='color: #d2a8ff;'>[WARN] Instruksi masih kosong.</span>";
         return;
     }
 
-    responseDiv.innerText = "Sedang berpikir...";
+    responseDiv.innerHTML = "<span style='color: var(--accent-color);'>Memproses permintaan data... ⏳</span>";
 
     try {
-        // Logika Membaca Konteks Excel (Nama Sheet & Header)
+        // Ambil konteks sederhana dari file Excel (Nama Sheet)
+        let excelContext = "Struktur Workbook:\n";
         await Excel.run(async (context) => {
             const sheets = context.workbook.worksheets;
             sheets.load("items/name");
             await context.sync();
 
-            let excelContext = "Struktur Workbook saya:\n";
             for (let sheet of sheets.items) {
                 excelContext += `- Sheet: ${sheet.name}\n`;
             }
-
-            // Panggil API Gemini
-            const result = await callGeminiAPI(apiKey, prompt, excelContext);
-            responseDiv.innerText = result;
         });
+
+        // Panggil fungsi API dan tangkap responnya
+        const result = await callGeminiAPI(apiKey, prompt, excelContext);
+        responseDiv.innerText = result;
+
     } catch (error) {
-        responseDiv.innerText = "Error: " + error.message;
+        responseDiv.innerHTML = `<span style='color: #ff7b72;'>[SYS_ERROR] Gagal membaca Excel: ${error.message}</span>`;
     }
 }
 
@@ -42,15 +59,36 @@ async function callGeminiAPI(key, userPrompt, context) {
     
     const body = {
         contents: [{
-            parts: [{ text: `${context}\n\nPertanyaan User: ${userPrompt}` }]
+            parts: [{ text: `${context}\n\nInstruksi User: ${userPrompt}` }]
         }]
     };
 
-    const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify(body)
-    });
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json" // Header penting ini yang sering bikin error kalau tidak ada
+            },
+            body: JSON.stringify(body)
+        });
 
-    const data = await response.json();
-    return data.candidates[0].content.parts[0].text;
+        const data = await response.json();
+
+        // CEK APAKAH GOOGLE MENGEMBALIKAN ERROR
+        if (!response.ok) {
+            if (data.error && data.error.message) {
+                return `[API_REJECTED] ${data.error.message}`;
+            }
+            return `[HTTP_ERROR] Kode Status: ${response.status}`;
+        }
+
+        // BACA JAWABAN JIKA BERHASIL
+        if (data.candidates && data.candidates.length > 0) {
+            return data.candidates[0].content.parts[0].text;
+        } else {
+            return "[WARN] Respons kosong dari AI.";
+        }
+    } catch (err) {
+        return `[NETWORK_ERROR] Gagal menyambung ke server Google: ${err.message}`;
+    }
 }

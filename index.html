@@ -1,30 +1,139 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8" />
-    <title>Gemini AI Sidebar</title>
+    <title>Nexus AI Engine</title>
+    <!-- Library Wajib Office.js -->
     <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 15px; background: #f4f4f4; }
-        .container { display: flex; flex-direction: column; gap: 10px; }
-        textarea { width: 100%; height: 80px; border-radius: 5px; border: 1px solid #ccc; padding: 5px; }
-        button { background: #0078d4; color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px; }
-        #response { margin-top: 15px; padding: 10px; background: white; border-radius: 5px; min-height: 50px; font-size: 14px; border: 1px solid #ddd; }
-        .setup { font-size: 11px; color: #666; margin-top: 20px; }
+        /* TEMA DIGITAL DARK MODE */
+        :root {
+            --bg-color: #0d1117;
+            --panel-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-color: #00ffcc; /* Warna neon cyan */
+            --border-color: #30363d;
+        }
+        
+        body {
+            font-family: 'Consolas', 'Courier New', monospace; /* Font ala programmer */
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            height: 95vh;
+        }
+        
+        .header {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-color);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 120px;
+            background-color: var(--panel-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            resize: vertical;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 8px rgba(0, 255, 204, 0.2);
+        }
+        
+        button {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 12px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-family: inherit;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        button:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.4);
+        }
+        
+        #response {
+            background-color: var(--panel-bg);
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            min-height: 80px;
+            font-size: 0.9em;
+            line-height: 1.5;
+            white-space: pre-wrap; /* Mempertahankan format baris baru dari AI */
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .api-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+        }
+        
+        .api-label {
+            font-size: 0.8em;
+            color: #8b949e;
+            margin-bottom: 8px;
+            display: block;
+        }
+        
+        .api-section input {
+            width: 100%;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: inherit;
+            font-size: 0.8em;
+        }
+        
+        .api-section input:focus {
+            outline: none;
+            border-color: #58a6ff;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h3>Gemini AI Assistant</h3>
-        <textarea id="prompt" placeholder="Tanya rumus atau analisis data..."></textarea>
-        <button id="ask-btn">Tanya Gemini</button>
-        
-        <div id="response">Jawaban akan muncul di sini...</div>
+    <div class="header">⚡ Nexus AI_</div>
+    
+    <textarea id="prompt" placeholder="[Input_Command] > Ketik instruksi data di sini..."></textarea>
+    <button id="ask-btn">Execute_</button>
+    
+    <div id="response">Sistem siap. Menunggu perintah...</div>
 
-        <div class="setup">
-            <input type="password" id="api-key" placeholder="Masukkan Gemini API Key">
-        </div>
+    <div class="api-section">
+        <label class="api-label">🔑 Konfigurasi API Key (Auto-Save)</label>
+        <input type="password" id="api-key" placeholder="Paste Gemini API Key di sini...">
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
