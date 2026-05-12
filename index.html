@@ -121,7 +121,7 @@
     </style>
 </head>
 <body>
-    <div class="header">⚡ DAANIERU INTEGRATED AI_</div>
+    <div class="header">⚡ DAANIERU INTEGRATED AI</div>
     
     <textarea id="prompt" placeholder="[Input_Command] > Ketik instruksi data di sini..."></textarea>
     <button id="ask-btn">EXECUTE_</button>
@@ -182,7 +182,7 @@
 
                 // Inisialisasi Otak Gemini pakai Library Asli
                 const genAI = new GoogleGenerativeAI(apiKey);
-                const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+                const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
                 const fullPrompt = `${excelContext}\n\nInstruksi User: ${prompt}`;
                 
