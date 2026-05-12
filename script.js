@@ -56,7 +56,7 @@ async function runGemini() {
 
 async function callGeminiAPI(key, userPrompt, context) {
     // FIX: Menggunakan model 'gemini-1.5-pro-latest' agar dikenali oleh server v1beta
-    const url =`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${key}`;
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${key}`;
     
     const body = {
         contents: [{
