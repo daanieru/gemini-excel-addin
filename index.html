@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus AI Engine - DAANIERU POLISHED</title>
-    <!-- Office.js API -->
-    <script src="[https://appsforoffice.microsoft.com/lib/1/hosted/office.js](https://appsforoffice.microsoft.com/lib/1/hosted/office.js)"></script>
+    <title>Nexus AI Engine - DAANIERU ULTIMATE FINAL</title>
+    <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -17,6 +16,7 @@
             --user-msg-bg: #232b36;
             --ai-msg-bg: #1c2128;
             --error-red: #ff7b72;
+            --magic-purple: #d2a8ff;
         }
         
         body {
@@ -96,30 +96,6 @@
             align-self: flex-start;
         }
 
-        /* ANIMASI LOADING SPINNER */
-        .spinner {
-            border: 3px solid rgba(0, 255, 204, 0.2);
-            border-top: 3px solid var(--accent-color);
-            border-radius: 50%;
-            width: 14px;
-            height: 14px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 8px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            vertical-align: middle;
-            font-style: italic;
-            color: #8b949e;
-        }
-
         /* INPUT AREA */
         .input-container {
             display: flex;
@@ -142,10 +118,17 @@
             transition: border-color 0.3s;
         }
         
-        textarea:focus { outline: none; border-color: var(--accent-color); }
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
         
         /* BUTTONS */
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
 
         button {
             background-color: #21262d;
@@ -161,7 +144,10 @@
             text-transform: uppercase;
         }
         
-        button:hover { border-color: var(--text-color); transform: translateY(-1px); }
+        button:hover {
+            border-color: var(--text-color);
+            transform: translateY(-1px);
+        }
         
         #ask-btn {
             grid-column: span 2;
@@ -173,11 +159,34 @@
             margin-bottom: 5px;
         }
         
-        #ask-btn:hover { background-color: var(--btn-hover); box-shadow: 0 0 15px rgba(0, 255, 204, 0.3); }
+        #ask-btn:hover {
+            background-color: var(--btn-hover);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
+        }
 
         /* MAGIC BUTTONS */
-        .magic-btn { display: none; border-color: var(--accent-color); color: var(--accent-color); }
-        .magic-btn:hover { background-color: var(--accent-color); color: var(--bg-color); }
+        .magic-btn {
+            display: none; /* Muncul otomatis jika ada konten relevan */
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .magic-btn:hover {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+
+        #btn-categorize {
+            border-color: var(--magic-purple);
+            color: var(--magic-purple);
+            grid-column: span 2;
+            margin-top: 5px;
+        }
+        
+        #btn-categorize:hover {
+            background-color: var(--magic-purple);
+            color: var(--bg-color);
+        }
 
         /* STATUS FOOTER */
         .status-footer {
@@ -202,7 +211,11 @@
     </div>
     
     <div id="chat-history">
-        <div class="chat-msg ai-msg">Nexus AI Engine Aktif. Sistem Loading Animasi & Macro Fix telah diterapkan. Fitur Categorize dinonaktifkan.</div>
+        <div class="chat-msg ai-msg">Nexus AI Engine Aktif.
+- Memori Percakapan: ON
+- Scan Lintas Sheet: ON
+- Tracking Kursor: ON
+- Macro & Formula Injector: READY</div>
     </div>
     
     <div class="input-container">
@@ -210,53 +223,45 @@
         
         <div class="btn-group">
             <button id="ask-btn">EXECUTE COMMAND</button>
+            
             <button id="btn-import" class="magic-btn">📥 IMPORT TABEL</button>
             <button id="btn-inject" class="magic-btn">💉 INJECT RUMUS</button>
             <button id="btn-macro" class="magic-btn">▶️ RUN MACRO</button>
+            
+            <button id="btn-categorize">🧹 SMART CATEGORIZE (BLOK KOLOM)</button>
         </div>
     </div>
 
     <div class="status-footer">
         <span>API_KEY: VERIFIED</span>
-        <span>ENGINE: v2.5.POLISHED</span>
+        <span>ENGINE: v2.5.ULTIMATE</span>
     </div>
 
     <script type="module">
-        import { GoogleGenerativeAI } from "[https://esm.run/@google/generative-ai](https://esm.run/@google/generative-ai)";
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-        // KUNCI API PERMANEN SAMA PERSIS
+        // KUNCI API PERMANEN
         const API_KEY = "AIzaSyCtZCINLMw11DfxEYRQRMfM-qc_jsJRt8M";
         
+        // GLOBAL STATE
         let chatHistory = [];
         let lastTableData = null;
         let lastFormulaData = null;
         let lastScriptData = null;
 
+        // INITIALIZE OFFICE
         Office.onReady((info) => {
             if (info.host === Office.HostType.Excel) {
+                // Binding Tombol ke Fungsi
                 document.getElementById("ask-btn").onclick = handleExecute;
                 document.getElementById("btn-import").onclick = executeImport;
                 document.getElementById("btn-inject").onclick = executeInject;
                 document.getElementById("btn-macro").onclick = executeMacro;
+                document.getElementById("btn-categorize").onclick = executeCategorize;
+                
+                console.log("DAANIERU System Ready.");
             }
         });
-
-        // FUNGSI UI: TAMPILKAN LOADING SPINNER
-        function showLoading() {
-            const chatBox = document.getElementById("chat-history");
-            const loadingDiv = document.createElement("div");
-            loadingDiv.id = "loading-indicator";
-            loadingDiv.className = "chat-msg ai-msg";
-            loadingDiv.innerHTML = '<div class="spinner"></div><span class="loading-text">Menarik referensi workbook & meracik respon...</span>';
-            chatBox.appendChild(loadingDiv);
-            chatBox.scrollTop = chatBox.scrollHeight;
-        }
-
-        // FUNGSI UI: HAPUS LOADING SPINNER
-        function removeLoading() {
-            const loadingDiv = document.getElementById("loading-indicator");
-            if (loadingDiv) loadingDiv.remove();
-        }
 
         // FUNGSI UI: TAMBAH CHAT
         function addMessage(role, text) {
@@ -267,18 +272,30 @@
             chatBox.appendChild(msgDiv);
             chatBox.scrollTop = chatBox.scrollHeight;
 
+            // Simpan ke Memori (Max 10 percakapan)
             chatHistory.push({ role: role, parts: [{ text: text }] });
             if (chatHistory.length > 10) chatHistory.shift();
         }
 
+        // FUNGSI CORE: AMBIL SEMUA DATA EXCEL (CONTEXT)
         async function getFullContext() {
-            let contextResult = { sheetsData: "", activeCell: "", selection: "" };
+            let contextResult = {
+                sheetsData: "",
+                activeCell: "",
+                selection: ""
+            };
+
             try {
                 await Excel.run(async (context) => {
+                    // 1. Ambil posisi kursor
                     const activeCell = context.workbook.getActiveCell();
                     activeCell.load("address");
+
+                    // 2. Ambil data yang sedang di-blok user
                     const selection = context.workbook.getSelectedRange();
                     selection.load("address, values");
+
+                    // 3. Ambil data dari semua sheet yang ada
                     const sheets = context.workbook.worksheets;
                     sheets.load("items/name");
                     await context.sync();
@@ -288,20 +305,27 @@
                         const range = sheet.getUsedRange();
                         range.load("values");
                         await context.sync();
+                        
                         allSheetsInfo += `--- Sheet: ${sheet.name} ---\n`;
                         if (range.values && range.values.length > 0) {
+                            // Ambil 30 baris pertama tiap sheet agar tidak overload token
                             allSheetsInfo += JSON.stringify(range.values.slice(0, 30)) + "\n";
+                        } else {
+                            allSheetsInfo += "(Sheet ini kosong)\n";
                         }
                     }
 
                     contextResult.sheetsData = allSheetsInfo;
                     contextResult.activeCell = activeCell.address;
-                    contextResult.selection = `User memblok range ${selection.address}: ${JSON.stringify(selection.values.slice(0,5))}`;
+                    contextResult.selection = `User sedang memblok range ${selection.address} dengan isi: ${JSON.stringify(selection.values.slice(0,5))}`;
                 });
-            } catch (err) { contextResult.sheetsData = "Gagal mengambil data."; }
+            } catch (err) {
+                contextResult.sheetsData = "Gagal mengambil data workbook.";
+            }
             return contextResult;
         }
 
+        // FUNGSI UTAMA: EKSEKUSI AI
         async function handleExecute() {
             const promptEl = document.getElementById("prompt");
             const userText = promptEl.value.trim();
@@ -309,80 +333,75 @@
 
             if (!userText) return;
 
+            // Bersihkan input & Sembunyikan tombol ajaib sebelumnya
             promptEl.value = "";
             document.querySelectorAll('.magic-btn').forEach(b => b.style.display = 'none');
             lastTableData = null; lastFormulaData = null; lastScriptData = null;
 
             addMessage("user", userText);
-            showLoading(); // Tampilkan Animasi Muter
 
             try {
+                // Ambil semua data Excel sebagai bahan pertimbangan AI
                 const excelContext = await getFullContext();
+                
                 const genAI = new GoogleGenerativeAI(API_KEY);
                 const model = genAI.getGenerativeModel({ model: modelName });
 
-                // INSTRUKSI FIX BUG MACRO & ANTI ERROR VS CODE (Pakai string biasa, bukan backtick)
-                const masterSystemPrompt = "Identitas: Kamu adalah DAANIERU_AI.\n" +
-                "Konteks Workbook: " + excelContext.sheetsData + "\n" +
-                "Posisi Kursor: " + excelContext.activeCell + "\n" +
-                excelContext.selection + "\n\n" +
-                "Aturan Ketat Output:\n" +
-                "1. Jika RUMUS EXCEL: Letakkan dalam ```excel \n =RUMUS() \n ```.\n" +
-                "2. Jika TABEL: Gunakan format Markdown Tabel.\n" +
-                "3. Jika MACRO (Office.js): Berikan HANYA isi kodenya saja di dalam ```javascript ... 
-```. JANGAN bungkus dengan 'async function() {}' atau 'Excel.run()'.\n" +
-                "Contoh Kode Macro yang BENAR:\n" +
-                "```javascript\n" +
-                "const sheet = context.workbook.worksheets.getActiveWorksheet();\n" +
-                "const activeCell = sheet.getRange(\"B2\");\n" +
-                "activeCell.format.fill.color = \"red\";\n" +
-                "
-```";
+                // Master Instruction: Memberi instruksi format ke Gemini
+                const masterSystemPrompt = `Identitas: Kamu adalah DAANIERU_AI.
+Konteks Workbook: ${excelContext.sheetsData}
+Posisi Kursor (Active Cell): ${excelContext.activeCell}
+${excelContext.selection}
 
+Aturan Ketat Output:
+1. Jika memberikan RUMUS EXCEL, wajib diletakkan dalam blockcode: \`\`\`excel [RUMUS] \`\`\`. Contoh: \`\`\`excel \n =SUM(A1:A10) \n \`\`\`.
+2. Jika memberikan TABEL DATA, gunakan format Markdown Tabel.
+3. Jika memberikan OTOMASI VISUAL/MACRO, gunakan kode Office.js JavaScript dalam blockcode: \`\`\`javascript [KODE] \`\`\`.
+Referensikan alamat sel dan nama sheet dengan tepat sesuai konteks di atas.`;
+
+                // Mulai Generate
                 const result = await model.generateContent(masterSystemPrompt + "\n\nPerintah User: " + userText);
                 const response = await result.response;
-                const responseText = response.text();
+                const aiResponseText = response.text();
 
-                removeLoading(); // Hapus Animasi
-                addMessage("ai", responseText);
+                addMessage("ai", aiResponseText);
 
-                // PARSING (Fix error regex /s diganti dengan [\s\S]*?)
-                if (responseText.includes("|") && responseText.includes("---")) {
-                    lastTableData = parseTable(responseText);
+                // --- LOGIKA PARSING (Deteksi konten untuk tombol) ---
+                
+                // A. Deteksi Tabel
+                if (aiResponseText.includes("|") && aiResponseText.includes("---")) {
+                    lastTableData = parseTable(aiResponseText);
                     if (lastTableData.length > 0) document.getElementById("btn-import").style.display = "block";
                 }
-                
-                const formulaMatch = responseText.match(/```excel\n([\s\S]*?)\n```/) || responseText.match(/`(=.*?)`/);
+
+                // B. Deteksi Rumus Excel
+                const formulaMatch = aiResponseText.match(/```excel\n(.*?)\n```/s) || aiResponseText.match(/`(=.*?)`/);
                 if (formulaMatch) {
                     lastFormulaData = formulaMatch[1].trim();
                     document.getElementById("btn-inject").style.display = "block";
                 }
 
-                const scriptMatch = responseText.match(/```javascript\n([\s\S]*?)\n
-```/);
+                // C. Deteksi Script Macro (JavaScript)
+                const scriptMatch = aiResponseText.match(/```javascript\n(.*?)\n```/s);
                 if (scriptMatch) {
-                    // Cek jika AI bandel masih ngasih fungsi bungkusan
-                    let rawScript = scriptMatch[1].trim();
-                    if (rawScript.includes("function") && rawScript.includes("Excel.run")) {
-                         addMessage("ai", "⚠️ Terdeteksi bug format Macro AI. Memperbaiki otomatis...");
-                         rawScript = rawScript.replace(/async function[\s\S]*?Excel\.run\(async\s*\(context\)\s*=>\s*{/g, '');
-                         rawScript = rawScript.replace(/}\);?\s*}\s*$/g, '');
-                    }
-                    lastScriptData = rawScript.trim();
+                    lastScriptData = scriptMatch[1].trim();
                     document.getElementById("btn-macro").style.display = "block";
                 }
 
             } catch (error) {
-                removeLoading();
                 addMessage("ai", `[ERROR_SYSTEM]: ${error.message}`);
             }
         }
 
+        // FUNGSI PARSER: Ubah teks tabel jadi Array Excel
         function parseTable(text) {
             let lines = text.trim().split('\n').filter(l => l.includes('|'));
+            // Buang baris pemisah markdown ---|---
             lines = lines.filter(l => !l.match(/\|[-\s]+\|/));
+            
             return lines.map(line => {
                 let cells = line.split('|').map(c => c.trim());
+                // Buang elemen kosong di ujung kiri/kanan karena pemisah |
                 if (cells[0] === "") cells.shift();
                 if (cells[cells.length - 1] === "") cells.pop();
                 return cells;
@@ -391,63 +410,104 @@
 
         // --- FITUR EKSEKUSI KE EXCEL ---
 
+        // 1. IMPORT TABEL
         async function executeImport() {
             if (!lastTableData) return;
-            try {
-                await Excel.run(async (context) => {
-                    const sheet = context.workbook.worksheets.getActiveWorksheet();
-                    const activeCell = context.workbook.getActiveCell();
-                    activeCell.load(["rowIndex", "columnIndex"]);
-                    await context.sync();
+            await Excel.run(async (context) => {
+                const sheet = context.workbook.worksheets.getActiveWorksheet();
+                const activeCell = context.workbook.getActiveCell();
+                activeCell.load(["rowIndex", "columnIndex"]);
+                await context.sync();
 
-                    const rowSize = lastTableData.length;
-                    const colSize = lastTableData[0].length;
-                    const range = sheet.getRangeByIndexes(activeCell.rowIndex, activeCell.columnIndex, rowSize, colSize);
-                    
-                    range.values = lastTableData;
-                    range.format.autofitColumns();
-                    await context.sync();
-                    
-                    addMessage("ai", "✅ Data tabel berhasil dipindahkan ke Sheet!");
-                    document.getElementById("btn-import").style.display = "none";
-                });
-            } catch (err) {
-                // Bug kotak biru (ListObject) ditangkap di sini
-                addMessage("ai", `❌ Gagal Import Tabel: ${err.message}. Pastikan area yang di-klik bebas dari format Tabel Bawaan Excel (Kotak Biru/ListObject) yang bentrok.`);
-            }
+                const rowSize = lastTableData.length;
+                const colSize = lastTableData[0].length;
+                
+                const range = sheet.getRangeByIndexes(activeCell.rowIndex, activeCell.columnIndex, rowSize, colSize);
+                range.values = lastTableData;
+                range.format.autofitColumns();
+                await context.sync();
+                
+                addMessage("ai", "✅ Data tabel berhasil dipindahkan ke Sheet!");
+                document.getElementById("btn-import").style.display = "none";
+            });
         }
 
+        // 2. INJECT RUMUS
         async function executeInject() {
             if (!lastFormulaData) return;
-            try {
-                await Excel.run(async (context) => {
-                    const activeCell = context.workbook.getActiveCell();
-                    activeCell.formulas = [[lastFormulaData]];
-                    activeCell.format.fill.color = "#00ffcc22";
-                    await context.sync();
-                    
-                    addMessage("ai", `💉 Rumus berhasil ditanam.`);
-                    document.getElementById("btn-inject").style.display = "none";
-                });
-            } catch (err) {
-                addMessage("ai", `❌ Gagal Inject Rumus: ${err.message}`);
-            }
+            await Excel.run(async (context) => {
+                const activeCell = context.workbook.getActiveCell();
+                activeCell.formulas = [[lastFormulaData]];
+                activeCell.format.fill.color = "#00ffcc22"; // Highlight tipis
+                await context.sync();
+                
+                addMessage("ai", `💉 Rumus ${lastFormulaData} berhasil ditanam.`);
+                document.getElementById("btn-inject").style.display = "none";
+            });
         }
 
+        // 3. RUN MACRO (Office.js Script)
         async function executeMacro() {
             if (!lastScriptData) return;
             try {
+                // Mengubah teks string menjadi fungsi eksekusi nyata
                 const dynamicMacro = new Function('Excel', `return Excel.run(async (context) => { 
                     ${lastScriptData} 
                     await context.sync(); 
                 });`);
                 
                 await dynamicMacro(Excel);
-                addMessage("ai", "▶️ Script Macro sukses dieksekusi.");
+                addMessage("ai", "▶️ Script Visual/Macro sukses dijalankan.");
                 document.getElementById("btn-macro").style.display = "none";
             } catch (err) {
-                addMessage("ai", `[ERROR_MACRO]: Kodenya tidak valid. Detil: ${err.message}`);
+                addMessage("ai", `[ERROR_MACRO]: ${err.message}`);
             }
+        }
+
+        // 4. SMART CATEGORIZE (Fitur Beres-beres)
+        async function executeCategorize() {
+            const modelName = document.getElementById("model-select").value;
+            addMessage("ai", "⏳ Sedang menganalisa data yang Anda blok...");
+
+            await Excel.run(async (context) => {
+                const selection = context.workbook.getSelectedRange();
+                selection.load(["values", "rowIndex", "columnIndex", "rowCount"]);
+                await context.sync();
+
+                if (selection.values[0].length > 1) {
+                    addMessage("ai", "⚠️ Tolong blok 1 kolom deskripsi saja.");
+                    return;
+                }
+
+                const genAI = new GoogleGenerativeAI(API_KEY);
+                const model = genAI.getGenerativeModel({ model: modelName });
+                
+                const categorizationPrompt = `Berikut adalah data dari Excel: ${JSON.stringify(selection.values)}. 
+Tolong buatkan kategori singkat (1-2 kata) untuk tiap barisnya. 
+Berikan hasil HANYA dalam format JSON Array String, contoh: ["Elektronik", "Fashion", "Lainnya"]. Jangan ada teks tambahan.`;
+
+                const result = await model.generateContent(categorizationPrompt);
+                let responseText = await result.response.text();
+                
+                // Bersihkan JSON dari backticks
+                responseText = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                
+                try {
+                    const categoryList = JSON.parse(responseText);
+                    const targetSheet = context.workbook.worksheets.getActiveWorksheet();
+                    // Letakkan di kolom sebelah kanan dari data yang diblok
+                    const targetRange = targetSheet.getRangeByIndexes(selection.rowIndex, selection.columnIndex + 1, selection.rowCount, 1);
+                    
+                    const excelFormattedValues = categoryList.map(item => [item]);
+                    targetRange.values = excelFormattedValues;
+                    targetRange.format.fill.color = "#d2a8ff22";
+                    await context.sync();
+                    
+                    addMessage("ai", "🧹 Pembersihan data selesai. Kategori ditambahkan di kolom sebelah.");
+                } catch (e) {
+                    addMessage("ai", "Gagal memproses kategori otomatis. Coba ulangi.");
+                }
+            });
         }
     </script>
 </body>
